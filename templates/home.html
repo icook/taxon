@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% set active_page = "home" %}
+{% set page_title = "Home" %}
+{% block body_w_flash %}
+<div>
+  <button class="pure-button"><i class="fa fa-tag fa-lg"></i>&nbsp; video (136)</button><!--
+  --><button class="pure-button button-vote"><i class="fa fa-thumbs-o-up"></i>&nbsp;</button><!--
+  --><button class="pure-button button-vote"><i class="fa fa-thumbs-o-down"></i>&nbsp;</button>
+  <button class="pure-button button-success"><i class="fa fa-plus fa-lg"></i></button>
+  <button class="pure-button pure-button-primary"><i class="fa fa-external-link fa-lg"></i></button>
+  <button class="pure-button button-expand"><i class="fa fa-caret-down fa-lg"></i></button>
+</div>
+<div>
+  <small><i class="fa fa-link"></i> https://www.youtube.com/watch?v=PYMbjj9KSeI</small>
+</div>
+{% endblock %}

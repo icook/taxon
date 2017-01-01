@@ -1,0 +1,61 @@
+log_level: "DEBUG"
+assets_address: "/static"
+#BUILD_CONFIG_PATH: "/app/build.yml"
+#TEMPLATE_PATH: "/app/templates"
+#STATIC_PATH: "/app/public"
+
+SQLALCHEMY_DATABASE_URI: "sqlite:///../db.sqlite"
+# postgresql://[user[:password]@][netloc][:port][/dbname][?param1=value1&...]
+SQLALCHEMY_TRACK_MODIFICATIONS: False
+SQLALCHEMY_ECHO: False
+SECRET_KEY: "testing_key"
+DONT_CONTACT_KEY: "dsflgkjsdfkl"
+DEBUG: True
+
+DEPOSIT_MINIMUM: "2.50"
+DEPOSIT_MAXIMUM: "500.00"
+WITHDRAW_MINIMUM: "2.50"
+WITHDRAW_MAXIMUM: "50.00"
+
+# Reply posts to mention that they've recieved a tip
+BOT_REPLY: False
+# Send users that get tipped onboarding messages
+BOT_INTRO: False
+BOT_REFRESH: 
+BOT_USERAGENT: "/u/bitbumper testing for taxon"
+
+GOOGLE_ANALYTICS_CODE:
+GOOGLE_CHROME_EXTENSION_ID: apdfllckaahabafndbhieahigkjlhalf
+
+# This is the fee that we predict PayPal will extract, and we pre-extract it
+FEE_PRE_EXTRACT_PAYPAL: "0.02"
+FEE_TIP_THRESHOLD: "0.10"
+FEE_TIP_PERCENTAGE: "0.10"
+
+MAIL_SERVER: 'email-smtp.us-east-1.amazonaws.com'
+MAIL_PORT: 465
+MAIL_USE_SSL: True
+MAIL_USERNAME: ''
+MAIL_PASSWORD: ''
+
+REDDIT_CONSUMER_KEY:
+REDDIT_CONSUMER_SECRET:
+
+PAYPAL_API_USERNAME: 
+PAYPAL_API_PASSWORD: 
+PAYPAL_API_SIGNATURE: 
+PAYPAL_API_VERSION: "124.0"
+
+PAYPAL_EXPRESS_URL: 'https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token='
+PAYPAL_IPN_URLSTRING: 'https://www.sandbox.paypal.com/cgi-bin/webscr'
+PAYPAL_IPN_VERIFY_EXTRA_PARAMS: [['cmd', '_notify-validate'],]
+
+PAYPAL_MODE: sandbox
+PAYPAL_CONSUMER_KEY: 
+PAYPAL_CONSUMER_SECRET: 
+
+celery:
+    CELERY_BROKER_URL: 'redis://localhost:6379'
+    CELERY_RESULT_BACKEND: 'redis://localhost:6379'
+    CELERY_ACCEPT_CONTENT: ['json', 'msgpack']
+    CELERY_TASK_SERIALIZER: 'json'
