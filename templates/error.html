@@ -4,11 +4,6 @@
 .body-container, .page-wrapper, {
   background-color: #F8F8F8;
 }
-.poop-icon {
-  width:150px;
-  padding: 5px 15px 15px 15px;
-}
-
 .content-wrapper {
   padding: 60px 0;
 }
@@ -16,21 +11,13 @@
 <div class="content-wrapper container-fluid jumbotron alert alert-danger">
   <div class="col-lg-6 col-lg-offset-3">
     <div class="media">
-      <div class="media-left">
-        <a href="#">
-          <img src="{{ config['assets_address'] | safe }}/img/Emojione_1F4A9.svg"
-               class="media-object poop-icon" alt="Poop">
-          <!-- Poo attribution: Emoji One [CC BY-SA 4.0 (http://creativecommons.org/licenses/by-sa/4.0)], via Wikimedia Commons-->
-        </a>
-      </div>
       <div class="media-body">
         <h2 class="media-heading">{{ error }}</h2>
         <p>
           Something went wrong, sorry about that! This error has been
           logged, and we do look at those.
-          <small style="font-size:12px;">Eventually.</small>
         </p>
-        <p>Seriously though, if you need a speedy resolution please reach out to support.</p>
+        <p>If you need a speedy resolution please reach out to support.</p>
         {% if g.sentry_event_id %}
         <p>The error identifier is: <b>{{ g.sentry_event_id }}</b></p>
         {% endif %}

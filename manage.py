@@ -6,8 +6,7 @@ import requests
 import pprint
 import rethinkdb
 
-from flask.ext.script import Manager, Shell
-from flask.ext.migrate import Migrate, MigrateCommand
+from flask_script import Manager, Shell
 from taxon import create_app, db
 
 app = create_app()

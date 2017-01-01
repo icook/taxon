@@ -4,7 +4,7 @@ import datetime
 import praw.objects
 
 from flask import render_template
-from flask.ext.script import Manager
+from flask_script import Manager
 from itsdangerous import URLSafeSerializer
 
 from . import celery, log, cfg

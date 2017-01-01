@@ -9,9 +9,9 @@ import paypalrestsdk
 import cryptacular.bcrypt
 
 from flask import Flask, render_template, abort, request, current_app
-from flask.ext.login import LoginManager, current_user
-from flask.ext.oauthlib.client import OAuth
-from flask.ext.rethinkdb import RethinkDB
+from flask_login import LoginManager, current_user
+from flask_oauthlib.client import OAuth
+from flask_rethinkdb import RethinkDB
 from celery import Celery
 from jinja2 import FileSystemLoader
 from werkzeug.local import LocalProxy

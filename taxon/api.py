@@ -1,7 +1,7 @@
 import decimal
 
 from flask import Blueprint, jsonify, request
-from flask.ext.login import current_user
+from flask_login import current_user
 
 api_blueprint = Blueprint('api', __name__)
 

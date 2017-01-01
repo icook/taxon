@@ -11,17 +11,17 @@
       {{ error }}
     </div>
     {% endfor %}
-    <form class="pure-form pure-form-stacked">
+    <form class="pure-form pure-form-stacked" method="post">
       <fieldset>
 
-        <label for="email">Username</label>
-        <input id="email" type="text" placeholder="borislav" autofocus>
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" value="{{ request.values.get('username', '') }}" placeholder="borislav" autofocus>
 
         <label for="password">Password</label>
-        <input id="password" type="password" placeholder="bakersdozen">
+        <input id="password" name="password" type="password" placeholder="bakersdozen">
 
         <label for="password2">Confirm...</label>
-        <input id="password2" type="password" placeholder="bakersdozen">
+        <input id="password2" name="password2" type="password" placeholder="bakersdozen">
 
         <button type="submit" class="pure-button pure-button-primary">Engage</button>
       </fieldset>
