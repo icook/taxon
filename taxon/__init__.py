@@ -53,16 +53,13 @@ def create_app(log_level=None, test=False, **kwargs):
     app.jinja_loader = FileSystemLoader(template_path)
     # Remove the defaualt installed flask logger
     del app.logger.handlers[0]
-    app.logger.setLevel(logging.NOTSET)
     log_format = logging.Formatter('%(asctime)s [%(name)s] [%(levelname)s]: %(message)s')
     log_level = getattr(logging, log_level or app.config['log_level'])
 
-    logger = logging.getLogger()
-    logger.setLevel(log_level)
+    app.logger.setLevel(log_level)
     handler = logging.StreamHandler(stream=sys.stdout)
     handler.setFormatter(log_format)
-    logger.addHandler(handler)
-    logging.getLogger('paypal.settings').setLevel(max(logging.INFO, log_level))
+    app.logger.addHandler(handler)
 
     lm.init_app(app)
     lm.login_view = "/oauth/reddit"

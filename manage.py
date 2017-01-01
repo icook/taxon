@@ -24,11 +24,15 @@ def init_db(generate=False):
     with app.app_context():
         connection = db.conn
         db_name = app.config['RETHINKDB_DB']
+        r = rethinkdb
+
         try:
-            rethinkdb.db(db_name).table_create('users').run(connection)
-            app.logger.info('Database setup completed')
+            r.db_drop(db_name).run(connection)
         except rethinkdb.RqlRuntimeError:
-            app.logger.info('Database already exists.', exc_info=True)
+            pass
+        r.db_create(db_name).run(connection)
+        r.db(db_name).table_create('users', primary_key='username').run(connection)
+        app.logger.info('Database setup completed')
 
 
 @manager.command
