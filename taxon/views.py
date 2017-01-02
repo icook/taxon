@@ -1,34 +1,26 @@
-import decimal
 import re
 import os
-import sqlalchemy
-import uuid
-import datetime
 import time
-import jwt
-import random
 import rethinkdb
 import xxhash
 
 from flask import (render_template, Blueprint, send_from_directory, request,
                    url_for, redirect, flash, session, current_app, jsonify)
 from flask_login import login_required, logout_user, login_user, current_user, abort
-from itertools import chain
-from itsdangerous import URLSafeSerializer, BadData
 
-from . import root, lm, oauth, cfg, log, tasks, lib, db, crypt
+from . import root, lm, log, tasks, lib, db, crypt, redis_store
 from .common_pass import common_pass
 
 
 main = Blueprint('main', __name__)
 
 url_regex = re.compile(
-        r'^(?:http|ftp)s?://' # http:// or https://
-        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
-        r'localhost|' #localhost...
-        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
-        r'(?::\d+)?' # optional port
-        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+    r'^(?:http|ftp)s?://' # http:// or https://
+    r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
+    r'localhost|' #localhost...
+    r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
+    r'(?::\d+)?' # optional port
+    r'(?:/?|[/?]\S+)$', re.IGNORECASE)
 
 
 class User:
@@ -48,6 +40,7 @@ class User:
 
     def get_id(self):
         return self.username
+
 
 @lm.user_loader
 def load_user(username):
@@ -75,7 +68,7 @@ def post():
     errors = []
     if request.method == 'POST':
         url = request.values.get('url')
-        tags = [request.values.get('tag' + str(i), '').strip() for i in range(10)]
+        tags = [request.values.get('tag' + str(i), '').strip().lower() for i in range(10)]
         tags = [t for t in tags if t]
 
         if not url_regex.match(url):
@@ -83,8 +76,12 @@ def post():
 
         if not errors:
             post_id = xxhash.xxh64(url).hexdigest()
-            dat = {'tags': tags, 'url': url, 'id': post_id, 'poster': current_user.username}
-            res = rethinkdb.table("posts").insert(dat).run(db.conn)
+            dat = {'tags': tags,
+                   'url': url,
+                   'id': post_id,
+                   'poster': current_user.username,
+                   'posted_at': time.time()}
+            rethinkdb.table("posts").insert(dat).run(db.conn)
             for tag in tags:
                 lib.vote(post_id, tag, current_user.username)
 
@@ -129,10 +126,21 @@ def register():
             dat = {'username': username, 'password': crypt.encode(password1)}
             res = rethinkdb.table("users").insert(dat).run(db.conn)
 
-
     return render_template('register.html', errors=errors)
+
+
+default_tags = ['video', 'image', 'gif', 'tech', 'movies', 'games', 'funny', 'programming', 'fitness']
 
 
 @main.route("/")
 def home():
-    return render_template('home.html')
+    items = {}
+    for tag in default_tags:
+        res = redis_store.zrange(tag, 0, 100, withscores=True)
+        for item, score in res:
+            items.setdefault(item, {})
+            items[item][tag] = score
+    res = rethinkdb.table("posts").get_all(*items.keys()).run(db.conn)
+    posts = [lib.Post(r, items.get(r['id'])) for r in res]
+    posts.sort(key=lambda p: p.composite_score)
+    return render_template('home.html', posts=posts)
