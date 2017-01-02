@@ -32,6 +32,7 @@ def init_db(generate=False):
             pass
         r.db_create(db_name).run(connection)
         r.db(db_name).table_create('users', primary_key='username').run(connection)
+        r.db(db_name).table_create('posts').run(connection)
         app.logger.info('Database setup completed')
 
 

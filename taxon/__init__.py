@@ -12,6 +12,7 @@ from flask import Flask, render_template, abort, request, current_app
 from flask_login import LoginManager, current_user
 from flask_oauthlib.client import OAuth
 from flask_rethinkdb import RethinkDB
+from flask_redis import FlaskRedis
 from celery import Celery
 from jinja2 import FileSystemLoader
 from werkzeug.local import LocalProxy
@@ -23,6 +24,8 @@ root = os.path.abspath(os.path.dirname(__file__) + '/../')
 lm = LoginManager()
 db = RethinkDB()
 oauth = OAuth()
+redis_store = FlaskRedis()
+
 crypt = cryptacular.bcrypt.BCRYPTPasswordManager()
 cfg = LocalProxy(
     lambda: getattr(current_app, 'config', None))
@@ -65,6 +68,7 @@ def create_app(log_level=None, test=False, **kwargs):
     lm.login_view = "/oauth/reddit"
     lm.login_message = None  # TODO: Remove after we add login page back in
     db.init_app(app)
+    redis_store.init_app(app)
     oauth.init_app(app)
 
     # Monkey patch the celery task

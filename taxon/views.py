@@ -1,4 +1,5 @@
 import decimal
+import re
 import os
 import sqlalchemy
 import uuid
@@ -7,6 +8,7 @@ import time
 import jwt
 import random
 import rethinkdb
+import xxhash
 
 from flask import (render_template, Blueprint, send_from_directory, request,
                    url_for, redirect, flash, session, current_app, jsonify)
@@ -19,6 +21,14 @@ from .common_pass import common_pass
 
 
 main = Blueprint('main', __name__)
+
+url_regex = re.compile(
+        r'^(?:http|ftp)s?://' # http:// or https://
+        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
+        r'localhost|' #localhost...
+        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
+        r'(?::\d+)?' # optional port
+        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
 
 
 class User:
@@ -59,6 +69,26 @@ def logout():
     logout_user()
     return redirect(url_for('main.home'))
 
+
+@main.route("/post", methods=['GET', 'POST'])
+def post():
+    errors = []
+    if request.method == 'POST':
+        url = request.values.get('url')
+        tags = [request.values.get('tag' + str(i), '').strip() for i in range(10)]
+        tags = [t for t in tags if t]
+
+        if not url_regex.match(url):
+            errors.append('Invalid URL provided')
+
+        if not errors:
+            post_id = xxhash.xxh64(url).hexdigest()
+            dat = {'tags': tags, 'url': url, 'id': post_id, 'poster': current_user.username}
+            res = rethinkdb.table("posts").insert(dat).run(db.conn)
+            for tag in tags:
+                lib.vote(post_id, tag, current_user.username)
+
+    return render_template('post.html', errors=errors)
 
 
 @main.route("/login", methods=['GET', 'POST'])

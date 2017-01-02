@@ -42,3 +42,4 @@ paypalrestsdk==1.11.5
 praw==3.3.0
 Flask-Admin==1.4.0
 rethinkdb==2.3.0.post6
+xxhash==0.6.1

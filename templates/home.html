@@ -2,6 +2,14 @@
 {% set active_page = "home" %}
 {% set page_title = "Home" %}
 {% block body_w_flash %}
+
+{% if current_user.is_authenticated() %}
+<a href="/post" class="pure-button pure-button-primary">Submit a new post!</a>
+{% else %}
+<a href="/register" class="pure-button pure-button-primary">Register and contribute!</a>
+{% endif %}
+<br>
+<br>
 <div>
   <button class="pure-button"><i class="fa fa-tag fa-lg"></i>&nbsp; video (136)</button><!--
   --><button class="pure-button button-vote"><i class="fa fa-thumbs-o-up"></i>&nbsp;</button><!--
