@@ -1,6 +1,7 @@
 from math import log10
 from decimal import Decimal
 
+import hashlib
 import datetime
 import ago
 
@@ -20,6 +21,10 @@ def duration(seconds):
 
 def humana_date(*args, **kwargs):
     return ago.human(*args, **kwargs)
+
+
+def md5(dat):
+    return hashlib.md5(dat).hexdigest()
 
 
 def human_date_utc(*args, **kwargs):

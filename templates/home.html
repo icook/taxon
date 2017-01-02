@@ -12,20 +12,34 @@
 <br>
 
 {% for post in posts %}
-<div>
-  {% for tag in post.tags %}
-  <button class="pure-button"><i class="fa fa-tag fa-lg"></i>&nbsp; {{ tag.id }} ({{ tag._score }})</button><!--
-  --><button class="pure-button button-vote"><i class="fa fa-thumbs-o-up"></i>&nbsp;</button><!--
-  --><button class="pure-button button-vote"><i class="fa fa-thumbs-o-down"></i>&nbsp;</button>
-  {% endfor %}
-  <button class="pure-button button-success"><i class="fa fa-plus fa-lg"></i></button>
-  <a class="pure-button pure-button-primary" href="{{ post.url }}" target="_blank">
-    <i class="fa fa-external-link fa-lg"></i>
-  </a>
-  <button class="pure-button button-expand"><i class="fa fa-caret-down fa-lg"></i></button>
-</div>
-<div>
-  <small><i class="fa fa-link"></i> {{ post.url }}</small>
+<div class="post">
+  <div style="padding: 0px 5px 5px 0px;">
+    <a class="pure-button" href="{{ post.url }}" target="_blank">
+      <i class="fa fa-link"></i>&nbsp;
+      <small>{{ post.url }}</small>
+    </a>
+  </div>
+  <div>
+    {% for tag in post.tags %}
+    <span class="tag">
+      <span style="text-align: center; padding: 5px 10px;">
+        <svg width="30" height="30" data-jdenticon-hash="{{ tag.id | md5 }}">
+          Fallback text for browsers not supporting canvas
+        </svg>
+        <span style="display:inline-block;">
+          &nbsp;{{ tag.id }}
+        </span>
+      </span>
+      <span class="buttons">
+        <button class="pure-button"><i class="fa fa-thumbs-o-up"></i></button><!--
+        --><span class="score">{{ tag._score | int | comma}}</span><!--
+        --><button class="pure-button"><i class="fa fa-thumbs-o-down"></i></button><!--
+        --><button class="pure-button {% if tag.id in subs %}pure-button-active {% endif%}"><i class="fa fa-feed"></i></button>
+      </span>
+    </span>
+    {% endfor %}
+    <button class="pure-button"><i class="fa fa-plus"></i></button>
+  </div>
 </div>
 {% endfor %}
 {% endblock %}

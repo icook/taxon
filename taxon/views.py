@@ -143,4 +143,4 @@ def home():
     res = rethinkdb.table("posts").get_all(*items.keys()).run(db.conn)
     posts = [lib.Post(r, items.get(r['id'])) for r in res]
     posts.sort(key=lambda p: p.composite_score)
-    return render_template('home.html', posts=posts)
+    return render_template('home.html', posts=posts, subs=default_tags)
