@@ -1,13 +1,6 @@
-import praw
-import praw.errors
-import datetime
-import praw.objects
-
-from flask import render_template
 from flask_script import Manager
-from itsdangerous import URLSafeSerializer
 
-from . import celery, log, cfg
+from . import celery
 
 
 SchedulerCommand = Manager(usage='run celery tasks by hand')

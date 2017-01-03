@@ -3,7 +3,7 @@
 {% set page_title = "Home" %}
 {% block body_w_flash %}
 
-{% if current_user.is_authenticated() %}
+{% if current_user.is_authenticated %}
 <a href="/post" class="pure-button pure-button-primary">Submit a new post!</a>
 {% else %}
 <a href="/register" class="pure-button pure-button-primary">Register and contribute!</a>

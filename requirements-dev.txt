@@ -1,4 +1,16 @@
-pytest==2.8.5
+pytest==3.0.5
 pytest-flask==0.10.0
-coverage==4.0.3
-pytest-cov==2.2.0
+coverage==4.3.1
+pytest-cov==2.4.0
+flake8==3.2.1
+pip-review==0.5
+
+# Deps
+click==6.6
+mccabe==0.5.3
+packaging==16.8
+py==1.4.32
+pycodestyle==2.2.0
+pyflakes==1.4.0
+pyparsing==2.1.10
+six==1.10.0

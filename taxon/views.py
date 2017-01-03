@@ -6,7 +6,7 @@ import xxhash
 
 from flask import (render_template, Blueprint, send_from_directory, request,
                    url_for, redirect, flash, session, current_app, jsonify)
-from flask_login import login_required, logout_user, login_user, current_user, abort
+from flask_login import login_required, logout_user, login_user, current_user
 
 from . import root, lm, log, tasks, lib, db, crypt, redis_store
 from .common_pass import common_pass

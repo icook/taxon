@@ -1,16 +1,12 @@
-import subprocess
 import logging
 import os
 import yaml
 import sys
 import inspect
-import paypal as paypal_lib
-import paypalrestsdk
 import cryptacular.bcrypt
 
 from flask import Flask, render_template, abort, request, current_app
 from flask_login import LoginManager, current_user
-from flask_oauthlib.client import OAuth
 from flask_rethinkdb import RethinkDB
 from flask_redis import FlaskRedis
 from celery import Celery
@@ -23,7 +19,6 @@ import taxon.filters as filters
 root = os.path.abspath(os.path.dirname(__file__) + '/../')
 lm = LoginManager()
 db = RethinkDB()
-oauth = OAuth()
 redis_store = FlaskRedis()
 
 crypt = cryptacular.bcrypt.BCRYPTPasswordManager()
@@ -65,11 +60,9 @@ def create_app(log_level=None, test=False, **kwargs):
     app.logger.addHandler(handler)
 
     lm.init_app(app)
-    lm.login_view = "/oauth/reddit"
     lm.login_message = None  # TODO: Remove after we add login page back in
     db.init_app(app)
     redis_store.init_app(app)
-    oauth.init_app(app)
 
     # Monkey patch the celery task
     TaskBase = celery.Task
