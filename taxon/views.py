@@ -64,6 +64,7 @@ def logout():
 
 
 @main.route("/post", methods=['GET', 'POST'])
+@login_required
 def post():
     errors = []
     if request.method == 'POST':
@@ -83,7 +84,7 @@ def post():
                    'posted_at': time.time()}
             rethinkdb.table("posts").insert(dat).run(db.conn)
             for tag in tags:
-                lib.vote(post_id, tag, current_user.username)
+                lib.vote(post_id, tag, current_user.username, True)
 
     return render_template('post.html', errors=errors)
 

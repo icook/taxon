@@ -1,11 +1,9 @@
-import decimal
-
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify
 from flask_login import current_user
 
 api_blueprint = Blueprint('api', __name__)
 
-from . import lib, tasks, cfg, log
+from . import lib, log
 
 
 class APIException(Exception):
@@ -36,8 +34,8 @@ def handle_api_error(error):
                    desc=None), 500
 
 
-@api_blueprint.route("/me")
-def me():
-    if current_user.is_anonymous():
-        abort(403, "access_denied", "You're not logged in")
-    return jsonify(**current_user.json_prep())
+@api_blueprint.route("/vote/<post_id>/<tag_id>/<direction>")
+def vote(post_id, tag_id, direction):
+    up = direction == 'up'
+    score = lib.vote(post_id, tag_id, current_user.username, up)
+    return jsonify(success=True, new_score=score)
