@@ -86,6 +86,9 @@ def post():
             for tag in tags:
                 lib.vote(post_id, tag, current_user.username, True)
 
+            flash("Post posted!", "success")
+            return redirect(url_for('main.home'))
+
     return render_template('post.html', errors=errors)
 
 
@@ -124,8 +127,11 @@ def register():
             errors.append('Username is already taken')
 
         if not errors:
-            dat = {'username': username, 'password': crypt.encode(password1)}
+            dat = {'username': username, 'password': crypt.encode(password1), 'reg_date': time.time()}
             res = rethinkdb.table("users").insert(dat).run(db.conn)
+            flash("Thanks for registering, you're now logged in!", "success")
+            login_user(User(**dat))
+            return redirect(url_for('main.home'))
 
     return render_template('register.html', errors=errors)
 

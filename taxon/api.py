@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from flask_login import current_user
+from flask_login import current_user, login_required
 
 api_blueprint = Blueprint('api', __name__)
 
@@ -35,6 +35,7 @@ def handle_api_error(error):
 
 
 @api_blueprint.route("/vote/<post_id>/<tag_id>/<direction>")
+@login_required
 def vote(post_id, tag_id, direction):
     up = direction == 'up'
     score = lib.vote(post_id, tag_id, current_user.username, up)
