@@ -145,6 +145,7 @@ def home():
     for tag in default_tags:
         res = redis_store.zrange(tag, 0, 100, withscores=True)
         for item, score in res:
+            item = item.decode('utf8')
             items.setdefault(item, {})
             items[item][tag] = score
     res = rethinkdb.table("posts").get_all(*items.keys()).run(db.conn)

@@ -24,7 +24,7 @@ def humana_date(*args, **kwargs):
 
 
 def md5(dat):
-    return hashlib.md5(dat).hexdigest()
+    return hashlib.md5(dat.encode('utf8')).hexdigest()
 
 
 def human_date_utc(*args, **kwargs):
