@@ -144,11 +144,6 @@ def home():
     items = {}
     for tag in default_tags:
         res = redis_store.zrange(tag, 0, 100, withscores=True)
-        for item, score in res:
-            item = item.decode('utf8')
-            items.setdefault(item, {})
-            items[item][tag] = score
-    res = rethinkdb.table("posts").get_all(*items.keys()).run(db.conn)
-    posts = [lib.Post(r, items.get(r['id'])) for r in res]
-    posts.sort(key=lambda p: p.composite_score)
-    return render_template('home.html', posts=posts, subs=default_tags)
+        res = [(b[0].decode('utf8'), b[1]) for b in res]
+        items[tag] = res
+    return render_template('home.html', items=items)

@@ -1,9 +1,11 @@
+import rethinkdb
+
 from flask import Blueprint, jsonify
 from flask_login import current_user, login_required
 
 api_blueprint = Blueprint('api', __name__)
 
-from . import lib, log
+from . import lib, log, db
 
 
 class APIException(Exception):
@@ -40,3 +42,11 @@ def vote(post_id, tag_id, direction):
     up = direction == 'up'
     score = lib.vote(post_id, tag_id, current_user.username, up)
     return jsonify(success=True, new_score=score)
+
+
+@api_blueprint.route("/posts/<comma_list>")
+@login_required
+def posts(comma_list):
+    ids = comma_list.split(",")
+    posts = rethinkdb.table("posts").get_all(*ids).run(db.conn)
+    return jsonify(success=True, posts=list(posts))
