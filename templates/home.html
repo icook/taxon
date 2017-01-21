@@ -15,7 +15,6 @@
 <script type="x-template" id="my-template">
 <div>
   <div class="post" v-for="post in linkList">
-    <small><pre>${ post }</pre></small>
     <div style="padding: 0px 5px 5px 0px;">
       <a class="pure-button" v-bind:href="post.url" target="_blank">
         <i class="fa fa-link"></i>&nbsp;
@@ -23,7 +22,8 @@
       </a>
     </div>
     <div>
-      <span class="tag" v-for="(tag, score) in post.tags">
+      <h4>Relevant tags</h4>
+      <span class="tag" v-for="(score, tag) in post.known_tags">
         <span style="text-align: center; padding: 5px 10px;">
           <span style="display:inline-block;">
             &nbsp;${ tag }
@@ -32,11 +32,23 @@
         <span class="buttons">
           <button class="pure-button"><i class="fa fa-thumbs-o-up"></i></button><!--
           --><span class="score">${ score }</span><!--
-          --><button class="pure-button"><i class="fa fa-thumbs-o-down"></i></button><!--
-          --><button class="pure-button pure-button-active"><i class="fa fa-feed"></i></button>
+          --><button class="pure-button"><i class="fa fa-thumbs-o-down"></i></button>
         </span>
       </span>
-      <button class="pure-button"><i class="fa fa-plus"></i></button>
+      <br>
+      <h4>Other tags</h4>
+      <span class="tag" v-for="tag in post.tags">
+        <span style="text-align: center; padding: 5px 10px;">
+          <span style="display:inline-block;">
+            &nbsp;${ tag }
+          </span>
+        </span>
+        <span class="buttons">
+          <button class="pure-button"><i class="fa fa-feed"></i></button>
+        </span>
+      </span>
+      &nbsp;
+      <button class="pure-button">Add new tag &nbsp;<i class="fa fa-plus"></i></button>
     </div>
   </div>
 </div>
@@ -77,6 +89,9 @@ var app = new Vue({
         success: function (data) {
           for (i = 0; i < data.posts.length; i++) { 
             var dat = data.posts[i];
+            dat.tags = dat.tags.filter(function(item) { 
+              return !links[dat.id].known_tags.hasOwnProperty(item);
+            });
             for (key in dat) {
               Vue.set(links[dat.id], key, dat[key]);
             }
