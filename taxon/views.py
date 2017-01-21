@@ -141,9 +141,9 @@ default_tags = ['video', 'image', 'gif', 'tech', 'movies', 'games', 'funny', 'pr
 
 @main.route("/")
 def home():
-    items = {}
+    tag_scores = {}
     for tag in default_tags:
         res = redis_store.zrange(tag, 0, 100, withscores=True)
         res = [(b[0].decode('utf8'), b[1]) for b in res]
-        items[tag] = res
-    return render_template('home.html', items=items)
+        tag_scores[tag] = res
+    return render_template('home.html', tag_scores=tag_scores)

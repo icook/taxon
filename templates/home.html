@@ -16,8 +16,8 @@
 <div>
   <h1>Test</h1>
   <ul>
-    <li v-for="item in items">
-      ${ item }
+    <li v-for="link in linkList">
+      ${ link }
     </li>
   </ul>
 </div>
@@ -62,30 +62,37 @@ var app = new Vue({
   el: '#app',
   template: '#my-template',
   data: {
-    items: {{ items | tojson }}
+    tagScores: {{ tag_scores | tojson }},
+    links: {},
+    linkList: []
   },
   methods: {
     onload: function() {
-      var links = {};
-      for (key in this.items) {
-        for (i = 0; i < this.items[key].length; i++) { 
-          var linkScore = this.items[key][i];
-          if (!links.hasOwnProperty(linkScore[0]))
-            links[linkScore[0]] = {tags: {}, score: 0, id: linkScore[0]};
-          links[linkScore[0]].score += linkScore[1];
-          links[linkScore[0]].tags[key] = linkScore[1];
+      for (key in this.tagScores) {
+        for (i = 0; i < this.tagScores[key].length; i++) { 
+          var linkScore = this.tagScores[key][i];
+          if (!this.links.hasOwnProperty(linkScore[0]))
+            this.links[linkScore[0]] = {known_tags: {}, score: 0, id: linkScore[0]};
+          this.links[linkScore[0]].score += linkScore[1];
+          this.links[linkScore[0]].known_tags[key] = linkScore[1];
         }
       }
-      var linkList = Object.values(links);
-      linkList.sort(function(a, b) {
+      this.linkList = Object.values(this.links);
+      this.linkList.sort(function(a, b) {
         return a.score - b.score;
       });
-      var fetchList = linkList.map(function (x) { return x.id });
+      var fetchList = this.linkList.map(function (x) { return x.id });
+      var links = this.links;
       $.ajax({
         url: '/api/v1/posts/' + fetchList.join(),
         method: 'GET',
         success: function (data) {
-          console.log(data);
+          for (i = 0; i < data.posts.length; i++) { 
+            var dat = data.posts[i];
+            for (key in dat) {
+              Vue.set(links[dat.id], key, dat[key]);
+            }
+          }
         },
         error: function (error) {
           console.log(JSON.stringify(error));
