@@ -30,9 +30,9 @@
           </span>
         </span>
         <span class="buttons">
-          <button class="pure-button"><i class="fa fa-thumbs-o-up"></i></button><!--
+          <button class="pure-button" @click="vote(post.id, tag, 'up')"><i class="fa fa-thumbs-o-up"></i></button><!--
           --><span class="score">${ score }</span><!--
-          --><button class="pure-button"><i class="fa fa-thumbs-o-down"></i></button>
+          --><button class="pure-button" @click="vote(post.id, tag, 'up')"><i class="fa fa-thumbs-o-down"></i></button>
         </span>
       </span>
       <br>
@@ -67,6 +67,20 @@ var app = new Vue({
     linkList: []
   },
   methods: {
+    vote: function (post_id, tag, direction) {
+      var links = this.links;
+      $.ajax({
+        url: '/api/v1/vote/' + post_id + '/' + tag + '/' + direction,
+        method: 'GET',
+        success: function (data) {
+          links[post_id].known_tags[tag] = data.new_score;
+        },
+        error: function (error) {
+          console.log(JSON.stringify(error));
+        }
+      });
+
+    },
     onload: function() {
       for (key in this.tagScores) {
         for (i = 0; i < this.tagScores[key].length; i++) { 
