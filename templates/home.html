@@ -10,7 +10,6 @@
   <a href="/register" class="pure-button pure-button-primary">Register and contribute!</a>
   {% endif %}
 </div>
-<br>
 
 <script type="x-template" id="my-template">
 <div>
@@ -22,7 +21,6 @@
       </a>
     </div>
     <div>
-      <h4>Relevant tags</h4>
       <span class="tag" v-for="(score, tag) in post.known_tags">
         <span style="text-align: center; padding: 5px 10px;">
           <span style="display:inline-block;">
@@ -33,10 +31,9 @@
           <button class="pure-button" @click="vote(post.id, tag, 'up')"><i class="fa fa-thumbs-o-up"></i></button><!--
           --><span class="score">${ score }</span><!--
           --><button class="pure-button" @click="vote(post.id, tag, 'up')"><i class="fa fa-thumbs-o-down"></i></button>
+          <button class="pure-button pure-button-active"><i class="fa fa-feed"></i></button>
         </span>
       </span>
-      <br>
-      <h4>Other tags</h4>
       <span class="tag" v-for="tag in post.tags">
         <span style="text-align: center; padding: 5px 10px;">
           <span style="display:inline-block;">
@@ -44,6 +41,9 @@
           </span>
         </span>
         <span class="buttons">
+          <button class="pure-button" @click="vote(post.id, tag, 'up')"><i class="fa fa-thumbs-o-up"></i></button><!--
+          --><span class="score">${ score }</span><!--
+          --><button class="pure-button" @click="vote(post.id, tag, 'up')"><i class="fa fa-thumbs-o-down"></i></button>
           <button class="pure-button"><i class="fa fa-feed"></i></button>
         </span>
       </span>

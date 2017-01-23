@@ -12,6 +12,7 @@ body {
     line-height: 1.7em;
     color: #7f8c8d;
     font-size: 13px;
+    background: #eee;
 }
 
 h1,
@@ -37,22 +38,27 @@ label {
   border-radius: 4px;
   -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
   box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
-  margin-right: 10px;
+  margin-right: 5px;
 }
 
-.post h4 {
-  margin: 5px;
+.pure-button-active {
+  color: #fff;
+  background: rgb(28, 184, 65); /* this is a green */
 }
 
 .post:hover {
-  border-left: 4px solid #1e1eff;
+  border: 1px solid #aaa;
 }
 .post {
   padding: 0em 0.5em;
   color: #000;
-  margin-left: 10px;
-  margin-bottom: 10px;
-  border-left: 4px solid #0f0f82;
+  margin: 10px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  padding: 10px;
+  -webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08);
+  border-radius: 2px;
 }
 
 .score {
@@ -210,12 +216,10 @@ label {
 .content-wrapper {
     /* These styles are required for the "scroll-over" effect */
     position: absolute;
-    top: 100px;
+    top: 57px;
     width: 100%;
     min-height: 12%;
     z-index: 2;
-    background: white;
-
 }
 
 /* This is the class used for the main content headers (<h2>) */
