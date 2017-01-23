@@ -36,6 +36,15 @@ def handle_api_error(error):
                    desc=None), 500
 
 
+@api_blueprint.route("/subscribe/<tag>")
+@login_required
+def subscribe(tag):
+    rethinkdb.table("users").get(current_user.username).update(
+        {'subscriptions': rethinkdb.row['subscriptions'].append(tag)}
+    ).run(db.conn)
+    return jsonify(success=True)
+
+
 @api_blueprint.route("/vote/<post_id>/<tag_id>/<direction>")
 @login_required
 def vote(post_id, tag_id, direction):
