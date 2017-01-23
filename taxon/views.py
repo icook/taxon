@@ -24,7 +24,8 @@ url_regex = re.compile(
 
 
 class User:
-    def __init__(self, username, active=True, authenticated=True, **kawargs):
+    def __init__(self, username, active=True, authenticated=True, **kwargs):
+        self.__dict__.update(**kwargs)
         self.username = username
         self.active = active
         self.authenticated = authenticated
@@ -127,7 +128,7 @@ def register():
             errors.append('Username is already taken')
 
         if not errors:
-            dat = {'username': username, 'password': crypt.encode(password1), 'reg_date': time.time()}
+            dat = {'username': username, 'password': crypt.encode(password1), 'reg_date': time.time(), 'subscriptions': default_tags}
             res = rethinkdb.table("users").insert(dat).run(db.conn)
             flash("Thanks for registering, you're now logged in!", "success")
             login_user(User(**dat))
@@ -146,4 +147,6 @@ def home():
         res = redis_store.zrange(tag, 0, 100, withscores=True)
         res = [(b[0].decode('utf8'), b[1]) for b in res]
         tag_scores[tag] = res
-    return render_template('home.html', tag_scores=tag_scores)
+
+    subs = {t: True for t in current_user.subscriptions}
+    return render_template('home.html', tag_scores=tag_scores, subscriptions=subs)

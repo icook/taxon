@@ -30,8 +30,8 @@
         <span class="buttons">
           <button class="pure-button" @click="vote(post.id, tag, 'up')"><i class="fa fa-thumbs-o-up"></i></button><!--
           --><span class="score">${ score }</span><!--
-          --><button class="pure-button" @click="vote(post.id, tag, 'up')"><i class="fa fa-thumbs-o-down"></i></button>
-          <button class="pure-button pure-button-active"><i class="fa fa-feed"></i></button>
+          --><button class="pure-button" @click="vote(post.id, tag, 'down')"><i class="fa fa-thumbs-o-down"></i></button>
+          <button :class="{ 'pure-button-active': subscriptions.hasOwnProperty(tag) }" class="pure-button"><i class="fa fa-feed"></i></button>
         </span>
       </span>
       <span class="tag" v-for="tag in post.tags">
@@ -43,7 +43,7 @@
         <span class="buttons">
           <button class="pure-button" @click="vote(post.id, tag, 'up')"><i class="fa fa-thumbs-o-up"></i></button><!--
           --><span class="score">${ score }</span><!--
-          --><button class="pure-button" @click="vote(post.id, tag, 'up')"><i class="fa fa-thumbs-o-down"></i></button>
+          --><button class="pure-button" @click="vote(post.id, tag, 'down')"><i class="fa fa-thumbs-o-down"></i></button>
           <button class="pure-button"><i class="fa fa-feed"></i></button>
         </span>
       </span>
@@ -64,7 +64,8 @@ var app = new Vue({
   data: {
     tagScores: {{ tag_scores | tojson }},
     links: {},
-    linkList: []
+    linkList: [],
+    subscriptions: {{ subscriptions | tojson }}
   },
   methods: {
     vote: function (post_id, tag, direction) {
@@ -73,7 +74,11 @@ var app = new Vue({
         url: '/api/v1/vote/' + post_id + '/' + tag + '/' + direction,
         method: 'GET',
         success: function (data) {
-          links[post_id].known_tags[tag] = data.new_score;
+          var link = links[post_id];
+          link.known_tags[tag] = data.new_score;
+          link.tags = link.tags.filter(function(item) { 
+            return !link.known_tags.hasOwnProperty(item);
+          });
         },
         error: function (error) {
           console.log(JSON.stringify(error));
