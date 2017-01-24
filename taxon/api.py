@@ -36,6 +36,15 @@ def handle_api_error(error):
                    desc=None), 500
 
 
+@api_blueprint.route("/unsubscribe/<tag>")
+@login_required
+def unsubscribe(tag):
+    rethinkdb.table("users").get(current_user.username).update(
+        {'subscriptions': rethinkdb.row['subscriptions'].difference([tag])}
+    ).run(db.conn)
+    return jsonify(success=True)
+
+
 @api_blueprint.route("/subscribe/<tag>")
 @login_required
 def subscribe(tag):
