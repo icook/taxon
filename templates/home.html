@@ -131,7 +131,7 @@ var app = new Vue({
       }
       this.linkList = Object.values(this.links);
       this.linkList.sort(function(a, b) {
-        return a.score - b.score;
+        return b.score - a.score;
       });
       var fetchList = this.linkList.map(function (x) { return x.id });
       var links = this.links;
