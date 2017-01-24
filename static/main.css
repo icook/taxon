@@ -39,6 +39,9 @@ label {
 .info span:last-child {
   border: none;
 }
+.info span:first-child {
+  padding-left: 0px;
+}
 
 .tag {
   background-color: #fff;
