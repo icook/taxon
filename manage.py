@@ -8,6 +8,7 @@ import rethinkdb
 
 from flask_script import Manager, Shell
 from taxon import create_app, db
+from taxon.tasks import SchedulerCommand
 
 app = create_app()
 manager = Manager(app)
@@ -57,6 +58,8 @@ def runserver():
         sys.stderr = LoggerWriter(app.logger, logging.INFO)
 
     current_app.run(host='0.0.0.0')
+
+manager.add_command('tasks', SchedulerCommand)
 
 
 if __name__ == "__main__":

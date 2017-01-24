@@ -78,14 +78,16 @@ def post():
 
         if not errors:
             post_id = xxhash.xxh64(url).hexdigest()
+            post_time = time.time()
             dat = {'tags': tags,
                    'url': url,
                    'id': post_id,
                    'poster': current_user.username,
-                   'posted_at': time.time()}
+                   'posted_at': post_time}
             rethinkdb.table("posts").insert(dat).run(db.conn)
             for tag in tags:
-                lib.vote(post_id, tag, current_user.username, True)
+                score = lib.vote(post_id, tag, current_user.username, True)
+                redis_store.zadd('hot_' + tag, lib.hot(score, post_time), post_id)
 
             flash("Post posted!", "success")
             return redirect(url_for('main.home'))
@@ -146,7 +148,7 @@ def home():
     subs = current_user.subscriptions if current_user.is_authenticated else default_tags
 
     for tag in subs:
-        res = redis_store.zrange(tag, 0, 100, withscores=True)
+        res = redis_store.zrange('hot_' + tag, 0, 100, withscores=True)
         res = [(b[0].decode('utf8'), b[1]) for b in res]
         tag_scores[tag] = res
 

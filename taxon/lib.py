@@ -1,3 +1,5 @@
+import math
+
 from . import redis_store, log
 
 
@@ -10,6 +12,13 @@ def vote(post_id, tag_id, user_id, up):
     dscore = redis_store.pfcount(dkey)
     score = uscore - dscore
 
-    redis_store.zadd(tag_id, score, post_id)
+    redis_store.zadd('top_' + tag_id, score, post_id)
     log.info("{user_id} voted up={up} for {tag_id} on {post_id}, new score {score}".format(**locals()))
     return score
+
+
+def hot(score, date):
+    order = math.log(max(abs(score), 1), 10)
+    sign = 1 if score > 0 else -1 if score < 0 else 0
+    seconds = date - 1134028003
+    return str(round(sign * order + seconds / 45000, 7))
