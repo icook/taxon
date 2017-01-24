@@ -110,9 +110,6 @@ var app = new Vue({
         success: function (data) {
           var link = links[post_id];
           link.tags[tag] = data.new_score;
-          link.tags = link.tags.filter(function(item) { 
-            return !link.tags.hasOwnProperty(item);
-          });
         },
         error: function (error) {
           console.log(JSON.stringify(error));
@@ -145,7 +142,7 @@ var app = new Vue({
             for (j = 0; j < post.tags.length; j++) { 
               var tag = post.tags[j];
               if (!links[post.id].tags.hasOwnProperty(tag))
-                links[post.id].tags[tag] = null;
+                Vue.set(links[post.id].tags, tag, null);
             }
             delete post.tags;
             for (key in post) {
