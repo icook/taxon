@@ -56,7 +56,7 @@ def runserver():
         sys.stdout = LoggerWriter(app.logger, logging.INFO)
         sys.stderr = LoggerWriter(app.logger, logging.INFO)
 
-    current_app.run(host='127.0.0.1')
+    current_app.run(host='0.0.0.0')
 
 
 if __name__ == "__main__":
