@@ -30,6 +30,16 @@ label {
     height: auto;
 }
 
+.info span {
+  border-right: 1px solid #555;
+  margin-top: 10px;
+  padding: 0px 15px;
+  display: inline-block;
+}
+.info span:last-child {
+  border: none;
+}
+
 .tag {
   background-color: #fff;
   display: inline-block;

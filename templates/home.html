@@ -36,12 +36,27 @@
       </span>
       <button class="pure-button">Add new tag &nbsp;<i class="fa fa-plus"></i></button>
     </div>
+    <div class="info">
+      <span title="Composite score">
+        <i class="fa fa-bullseye"></i> &nbsp;${ post.score }
+      </span>
+      <span title="Heat">
+        <i class="fa fa-fire"></i> &nbsp;12
+      </span>
+      <span title="Author">
+        <i class="fa fa-user-circle"></i> &nbsp;${ post.poster }
+      </span>
+      <span title="Post Time">
+        <i class="fa fa-clock-o"></i> &nbsp;${ post.posted_at | formatDate }
+      </span>
+    </div>
   </div>
 </div>
 </script>
 <div id="app">
 </div>
 <script src="https://unpkg.com/vue@2.1.10/dist/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
 <script>
 var app = new Vue({
   el: '#app',
@@ -142,6 +157,11 @@ var app = new Vue({
     }
   },
   delimiters: ["${","}"]
+});
+Vue.filter('formatDate', function(value) {
+  if (value) {
+    return moment.unix(value).fromNow();
+  }
 });
 app.onload();
 </script>
