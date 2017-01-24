@@ -141,14 +141,15 @@ var app = new Vue({
         method: 'GET',
         success: function (data) {
           for (i = 0; i < data.posts.length; i++) { 
-            var dat = data.posts[i];
-            for (i = 0; i < dat.tags.length; i++) { 
-              if (!links[dat.id].tags.hasOwnProperty(dat.tags[i]))
-                links[dat.id].tags[dat.tags[i]] = null;
+            var post = data.posts[i];
+            for (j = 0; j < post.tags.length; j++) { 
+              var tag = post.tags[j];
+              if (!links[post.id].tags.hasOwnProperty(tag))
+                links[post.id].tags[tag] = null;
             }
-            delete dat.tags;
-            for (key in dat) {
-              Vue.set(links[dat.id], key, dat[key]);
+            delete post.tags;
+            for (key in post) {
+              Vue.set(links[post.id], key, post[key]);
             }
           }
         },
