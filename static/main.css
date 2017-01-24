@@ -54,6 +54,22 @@ label {
   margin-right: 5px;
 }
 
+.tag .title {
+  text-align: center;
+  padding: 5px 10px;
+}
+
+@media only screen and (max-width: 500px) {
+  .tag {
+    width: 100%;
+    display: block;
+    margin-bottom: 5px;
+  }
+  .tag .buttons {
+    float:right;
+  }
+}
+
 .pure-button-active {
   color: #fff;
   background: rgb(28, 184, 65); /* this is a green */
