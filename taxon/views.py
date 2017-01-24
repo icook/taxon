@@ -143,10 +143,12 @@ default_tags = ['video', 'image', 'gif', 'tech', 'movies', 'games', 'funny', 'pr
 @main.route("/")
 def home():
     tag_scores = {}
-    for tag in default_tags:
+    subs = current_user.subscriptions if current_user.is_authenticated else default_tags
+
+    for tag in subs:
         res = redis_store.zrange(tag, 0, 100, withscores=True)
         res = [(b[0].decode('utf8'), b[1]) for b in res]
         tag_scores[tag] = res
 
-    subs = {t: True for t in current_user.subscriptions}
-    return render_template('home.html', tag_scores=tag_scores, subscriptions=subs)
+    subs_dict = {t: True for t in subs}
+    return render_template('home.html', tag_scores=tag_scores, subscriptions=subs_dict)
