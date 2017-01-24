@@ -14,41 +14,43 @@
 <script type="x-template" id="my-template">
 <div>
   <div class="post" v-for="post in linkList">
-    <div style="padding: 0px 5px 5px 0px;">
-      <a class="pure-button" v-bind:href="post.url" target="_blank">
-        <i class="fa fa-link"></i>&nbsp;
+    <div style="padding: 0px 5px 5px 0px; border-bottom: 1px solid #ccc; margin-bottom: 5px; font-size: 16pt;">
+      <i class="fa fa-link"></i>&nbsp;
+      <a v-bind:href="post.url" target="_blank">
         <small>${ post.url }</small>
       </a>
     </div>
-    <div>
-      <span class="tag" v-for="(score, tag) in post.tags">
-        <span style="text-align: center; padding: 5px 10px;">
-          <span style="display:inline-block;">
-            &nbsp;${ tag }
+    <div style="padding: 5px;">
+      <div>
+        <span class="tag" v-for="(score, tag) in post.tags">
+          <span style="text-align: center; padding: 5px 10px;">
+            <span style="display:inline-block;">
+              &nbsp;${ tag }
+            </span>
+          </span>
+          <span class="buttons">
+            <button class="pure-button" @click="vote(post.id, tag, 'up')"><i class="fa fa-thumbs-o-up"></i></button><!--
+            --><span class="score">${ score }</span><!--
+            --><button class="pure-button" @click="vote(post.id, tag, 'down')"><i class="fa fa-thumbs-o-down"></i></button>
+            <button :class="{ 'pure-button-active': subscriptions.hasOwnProperty(tag) }" @click="subscribe(tag)" @dblclick="unsubscribe(tag)" class="pure-button"><i class="fa fa-feed"></i></button>
           </span>
         </span>
-        <span class="buttons">
-          <button class="pure-button" @click="vote(post.id, tag, 'up')"><i class="fa fa-thumbs-o-up"></i></button><!--
-          --><span class="score">${ score }</span><!--
-          --><button class="pure-button" @click="vote(post.id, tag, 'down')"><i class="fa fa-thumbs-o-down"></i></button>
-          <button :class="{ 'pure-button-active': subscriptions.hasOwnProperty(tag) }" @click="subscribe(tag)" @dblclick="unsubscribe(tag)" class="pure-button"><i class="fa fa-feed"></i></button>
+        <button class="pure-button">Add new tag &nbsp;<i class="fa fa-plus"></i></button>
+      </div>
+      <div class="info">
+        <span title="Composite score">
+          <i class="fa fa-bullseye"></i> &nbsp;${ post.score }
         </span>
-      </span>
-      <button class="pure-button">Add new tag &nbsp;<i class="fa fa-plus"></i></button>
-    </div>
-    <div class="info">
-      <span title="Composite score">
-        <i class="fa fa-bullseye"></i> &nbsp;${ post.score }
-      </span>
-      <span title="Heat">
-        <i class="fa fa-fire"></i> &nbsp;12
-      </span>
-      <span title="Author">
-        <i class="fa fa-user-circle"></i> &nbsp;${ post.poster }
-      </span>
-      <span title="Post Time">
-        <i class="fa fa-clock-o"></i> &nbsp;${ post.posted_at | formatDate }
-      </span>
+        <span title="Heat">
+          <i class="fa fa-fire"></i> &nbsp;12
+        </span>
+        <span title="Author">
+          <i class="fa fa-user-circle"></i> &nbsp;${ post.poster }
+        </span>
+        <span title="Post Time">
+          <i class="fa fa-clock-o"></i> &nbsp;${ post.posted_at | formatDate }
+        </span>
+      </div>
     </div>
   </div>
 </div>
