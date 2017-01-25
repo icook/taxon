@@ -12,7 +12,7 @@
       {{ error }}
     </div>
     {% endfor %}
-    <form class="pure-form pure-form-stacked">
+    <form class="pure-form pure-form-stacked" method="POST">
       <fieldset>
 
         <label for="url">URL</label>
@@ -23,9 +23,9 @@
           <li v-for="tag in tags">${ tag } <a class="pure-button button-warn" @click="remove(tag)">x</a></li>
         </ul>
         <fieldset class="pure-group">
-          <input id="tag" name="tag" type="text">
+          <input id="tag" name="tag" type="text" @keydown.enter.prevent="addTag()">
         </fieldset>
-
+        <input type="hidden" id="tags" :value="tags.join()" name="tags">
         <button type="submit" class="pure-button pure-button-primary">Share</button>
       </fieldset>
     </form>
@@ -43,24 +43,33 @@ var app = new Vue({
   template: '#my-template',
   data: {
     subscriptions: {{ subscriptions | tojson }},
-    tags: []
+    tags: [],
+    complete: null
   },
   methods: {
     remove: function (tag) {
       this.tags = this.tags.filter(function (val) { return tag !== val });
     },
+    addTag: function (tag) {
+      if (!tag && this.complete.isOpened)
+        return;
+      if (!tag)
+        tag = $('#tag').val();
+      this.tags.push(tag);
+      $('#tag').val('');
+    },
     onload: function () {
-      new Awesomplete(document.querySelector("#tag"), {
+      this.complete = new Awesomplete(document.querySelector("#tag"), {
         list: this.subscriptions,
         minChars: 1,
         data: function (item, input) {
           return { label: item[0] + " (" + item[1] + ")", value: item[0] }
         }
       });
-      var tags = this.tags;
+
+      var addTag = this.addTag;
       window.addEventListener("awesomplete-selectcomplete", function(e) {
-        tags.push($('#tag').val());
-        $('#tag').val('');
+        addTag(e.text.value);
       }, false);
     }
   },

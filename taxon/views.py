@@ -70,8 +70,8 @@ def post():
     errors = []
     if request.method == 'POST':
         url = request.values.get('url')
-        tags = [request.values.get('tag' + str(i), '').strip().lower() for i in range(10)]
-        tags = [t for t in tags if t]
+        tags = request.values.get('tags').split(',')
+        print(request.values)
 
         if not url_regex.match(url):
             errors.append('Invalid URL provided')
