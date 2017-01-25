@@ -92,7 +92,9 @@ def post():
             flash("Post posted!", "success")
             return redirect(url_for('main.home'))
 
-    return render_template('post.html', errors=errors)
+    subscriptions = [(r[0].decode('utf8'), r[1]) for r in
+                     redis_store.zrange('subscriptions', 0, 1000, withscores=True)]
+    return render_template('post.html', errors=errors, subscriptions=subscriptions)
 
 
 @main.route("/login", methods=['GET', 'POST'])
