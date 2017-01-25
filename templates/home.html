@@ -41,10 +41,7 @@
       </div>
       <div class="info">
         <span title="Composite score">
-          <i class="fa fa-bullseye"></i> &nbsp;${ post.score }
-        </span>
-        <span title="Heat">
-          <i class="fa fa-fire"></i> &nbsp;12
+          <i class="fa fa-bullseye"></i> &nbsp;${ post.score | round }
         </span>
         <span title="Author">
           <i class="fa fa-user-circle"></i> &nbsp;${ post.poster }
@@ -164,6 +161,14 @@ Vue.filter('formatDate', function(value) {
   if (value) {
     return moment.unix(value).fromNow();
   }
+});
+Vue.filter('round', function(value, decimals) {
+  if(!value)
+    value = 0;
+  if(!decimals)
+    decimals = 0;
+  value = Math.round(value * Math.pow(10, decimals)) / Math.pow(10, decimals);
+  return value;
 });
 app.onload();
 </script>

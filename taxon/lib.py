@@ -1,6 +1,7 @@
 import math
+import rethinkdb
 
-from . import redis_store, log
+from . import redis_store, log, db
 
 
 def vote(post_id, tag_id, user_id, up):
@@ -22,3 +23,17 @@ def hot(score, date):
     sign = 1 if score > 0 else -1 if score < 0 else 0
     seconds = date - 1134028003
     return str(round(sign * order + seconds / 45000, 7))
+
+
+def unsubscribe(username, tag):
+    rethinkdb.table("users").get(username).update(
+        {'subscriptions': rethinkdb.row['subscriptions'].difference([tag])}
+    ).run(db.conn)
+    redis_store.zincrby('subscriptions', tag, amount=-1)
+
+
+def subscribe(username, tag):
+    rethinkdb.table("users").get(username).update(
+        {'subscriptions': rethinkdb.row['subscriptions'].append(tag)}
+    ).run(db.conn)
+    redis_store.zincrby('subscriptions', tag)

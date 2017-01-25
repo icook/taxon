@@ -130,8 +130,15 @@ def register():
             errors.append('Username is already taken')
 
         if not errors:
-            dat = {'username': username, 'password': crypt.encode(password1), 'reg_date': time.time(), 'subscriptions': default_tags}
+            dat = {
+                'username': username,
+                'password': crypt.encode(password1),
+                'reg_date': time.time(),
+                'subscriptions': []
+            }
             res = rethinkdb.table("users").insert(dat).run(db.conn)
+            for tag in default_tags:
+                lib.subscribe(username, tag)
             flash("Thanks for registering, you're now logged in!", "success")
             login_user(User(**dat))
             return redirect(url_for('main.home'))

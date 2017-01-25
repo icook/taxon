@@ -5,7 +5,7 @@ from flask_login import current_user, login_required
 
 api_blueprint = Blueprint('api', __name__)
 
-from . import lib, log, db
+from . import lib, log, db, redis_store
 
 
 class APIException(Exception):
@@ -39,18 +39,14 @@ def handle_api_error(error):
 @api_blueprint.route("/unsubscribe/<tag>")
 @login_required
 def unsubscribe(tag):
-    rethinkdb.table("users").get(current_user.username).update(
-        {'subscriptions': rethinkdb.row['subscriptions'].difference([tag])}
-    ).run(db.conn)
+    lib.unsubscribe(current_user.username, tag)
     return jsonify(success=True)
 
 
 @api_blueprint.route("/subscribe/<tag>")
 @login_required
 def subscribe(tag):
-    rethinkdb.table("users").get(current_user.username).update(
-        {'subscriptions': rethinkdb.row['subscriptions'].append(tag)}
-    ).run(db.conn)
+    lib.subscribe(current_user.username, tag)
     return jsonify(success=True)
 
 
