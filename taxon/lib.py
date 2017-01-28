@@ -15,6 +15,9 @@ def vote(post_id, tag_id, user_id, up):
 
     redis_store.zadd('top_' + tag_id, score, post_id)
     log.info("{user_id} voted up={up} for {tag_id} on {post_id}, new score {score}".format(**locals()))
+    rethinkdb.table("posts").get(post_id).update(
+        {'tag_scores': {tag_id: score}}
+    ).run(db.conn)
     return score
 
 
