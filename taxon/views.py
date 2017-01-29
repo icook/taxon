@@ -84,13 +84,20 @@ def post():
                    'id': post_id,
                    'poster': current_user.username,
                    'posted_at': post_time}
-            rethinkdb.table("posts").insert(dat).run(db.conn)
-            for tag in tags:
-                score = lib.vote(post_id, tag, current_user.username, True)
-                redis_store.zadd('hot_' + tag, lib.hot(score, post_time), post_id)
+            res = rethinkdb.table("posts").insert(dat).run(db.conn)
+            if res['errors'] > 0:
+                if 'primary key' in res['first_error']:
+                    errors.append('That post has already been made!')
+                else:
+                    errors.append('Database error! This has been logged.')
+                    log.error('Error inserting new post, rethinkdb returned {}'.format(res))
+            else:
+                for tag in tags:
+                    score = lib.vote(post_id, tag, current_user.username, True)
+                    redis_store.zadd('hot_' + tag, lib.hot(score, post_time), post_id)
 
-            flash("Post posted!", "success")
-            return redirect(url_for('main.home'))
+                flash("Post posted!", "success")
+                return redirect(url_for('main.home'))
 
     subscriptions = [(r[0].decode('utf8'), r[1]) for r in
                      redis_store.zrange('subscriptions', 0, 1000, withscores=True)]
