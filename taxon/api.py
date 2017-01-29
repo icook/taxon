@@ -59,7 +59,6 @@ def vote(post_id, tag_id, direction):
 
 
 @api_blueprint.route("/posts/<comma_list>")
-@login_required
 def posts(comma_list):
     ids = comma_list.split(",")
     posts = rethinkdb.table("posts").get_all(*ids).run(db.conn)
