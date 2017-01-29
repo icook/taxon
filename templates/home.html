@@ -4,6 +4,10 @@
 {% block body_w_flash %}
 
 <div class="l-box">
+  <div class="pure-alert pure-alert-warning">
+    We're still in development, all data will likely get wiped at some point! Tell me all the shit that's broken, confusing, etc <a href="mailto:isaac@simpload.com">isaac@simpload.com</a>.
+  </div>
+
   {% if current_user.is_authenticated %}
   <a href="/post" class="pure-button pure-button-primary">Submit a new post!</a>
   {% else %}
