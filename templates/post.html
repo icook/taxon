@@ -25,6 +25,7 @@
         </ul>
         <fieldset class="pure-group">
           <input id="tag" name="tag" type="text" @keydown.enter.prevent="addTag()">
+          <a class="pure-button pure-button-primary" @click="addTag()">Add tag</a>
         </fieldset>
         <input type="hidden" id="tags" :value="tags.join()" name="tags">
         <button type="submit" class="pure-button pure-button-primary">Share</button>
