@@ -58,6 +58,16 @@ def vote(post_id, tag_id, direction):
     return jsonify(success=True, new_score=score)
 
 
+@api_blueprint.route("/add_tag/<post_id>/<tag>")
+def add_tag(post_id, tag):
+    res = rethinkdb.table("posts").get(post_id).update(
+        {'tags': rethinkdb.row['tags'].append(tag)}).run(db.conn)
+    score = lib.vote(post_id, tag, current_user.username, True)
+    if not res['errors']:
+        return jsonify(success=True, score=score)
+    return jsonify(success=False)
+
+
 @api_blueprint.route("/posts/<comma_list>")
 def posts(comma_list):
     ids = comma_list.split(",")
