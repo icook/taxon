@@ -90,11 +90,12 @@ var app = new Vue({
   },
   methods: {
     addTag: function (post_id) {
+      var t = this;
       $.ajax({
         url: '/api/v1/add_tag/' + this.activePost + '/' + this.newTag,
         method: 'GET',
         success: function (data) {
-          console.log(data);
+          Vue.set(t.links[t.activePost].tags, t.newTag, data.score);
         },
         error: function (error) {
           console.log(JSON.stringify(error));
