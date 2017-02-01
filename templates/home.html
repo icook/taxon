@@ -53,7 +53,7 @@
           <i class="fa fa-bullseye"></i> &nbsp;${ post.score | round }
         </span>
         <span title="Author">
-          <i class="fa fa-user-circle"></i> &nbsp;${ post.poster }
+          <i class="fa fa-user-circle"></i> &nbsp;<a :href="'/u/' + post.poster">${ post.poster }</a>
         </span>
         <span title="Post Time">
           <i class="fa fa-clock-o"></i> &nbsp;${ post.posted_at | formatDate }

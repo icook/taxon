@@ -172,6 +172,15 @@ def home():
     return render_template('home.html', tag_scores=tag_scores, subscriptions=subs_dict, posts=[])
 
 
+@main.route("/u/<username>")
+def user_view(username):
+    subs = current_user.subscriptions if current_user.is_authenticated else default_tags
+    subs_dict = {t: True for t in subs}
+
+    posts = rethinkdb.table("posts").filter({"poster": username}).run(db.conn)
+    return render_template('home.html', tag_scores=[], subscriptions=subs_dict, posts=list(posts))
+
+
 @main.route("/p/<post_id>")
 def post_view(post_id):
     subs = current_user.subscriptions if current_user.is_authenticated else default_tags
