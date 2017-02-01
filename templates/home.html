@@ -49,7 +49,7 @@
 
       </div>
       <div class="info">
-        <span title="Composite score">
+        <span title="Composite score" v-if="post.score">
           <i class="fa fa-bullseye"></i> &nbsp;${ post.score | round }
         </span>
         <span title="Author">
@@ -72,10 +72,18 @@ var app = new Vue({
   el: '#app',
   template: '#my-template',
   data: {
+    // Data from server side
     tagScores: {{ tag_scores | tojson }},
+    postData: {{ posts | tojson }},
+
+    // Link data storage in Vue friendly format
     links: {},
     linkList: [],
+
+    // User information
     subscriptions: {{ subscriptions | tojson }},
+
+    // Tag adding status flags
     addingTag: false,
     activePost: null,
     newTag: null
@@ -140,43 +148,59 @@ var app = new Vue({
       });
 
     },
-    onload: function() {
-      for (key in this.tagScores) {
-        for (i = 0; i < this.tagScores[key].length; i++) { 
-          var linkScore = this.tagScores[key][i];
-          if (!this.links.hasOwnProperty(linkScore[0]))
-            this.links[linkScore[0]] = {tags: {}, score: 0, id: linkScore[0]};
-          this.links[linkScore[0]].score += linkScore[1];
-          this.links[linkScore[0]].tags[key] = -1;
+    genPostTemplate: function(id) {
+      return {tags: {}, score: null, id: id};
+    },
+    populateLinks: function (data) {
+      // Populate our local Vue objects from Rethinkdb data
+      for (i = 0; i < data.length; i++) { 
+        var post = data[i];
+        if (!this.links.hasOwnProperty(post.id))
+          this.links[post.id] = this.genPostTemplate(post.id);
+        for (j = 0; j < post.tags.length; j++) { 
+          var tag = post.tags[j];
+          if (post.tag_scores.hasOwnProperty(tag))
+            Vue.set(this.links[post.id].tags, tag, post.tag_scores[tag]);
+        }
+        delete post.tags;
+        for (key in post) {
+          Vue.set(this.links[post.id], key, post[key]);
         }
       }
-      this.linkList = Object.values(this.links);
-      this.linkList.sort(function(a, b) {
-        return b.score - a.score;
-      });
-      var fetchList = this.linkList.map(function (x) { return x.id });
-      var links = this.links;
-      $.ajax({
-        url: '/api/v1/posts/' + fetchList.join(),
-        method: 'GET',
-        success: function (data) {
-          for (i = 0; i < data.posts.length; i++) { 
-            var post = data.posts[i];
-            for (j = 0; j < post.tags.length; j++) { 
-              var tag = post.tags[j];
-              if (post.tag_scores.hasOwnProperty(tag))
-                Vue.set(links[post.id].tags, tag, post.tag_scores[tag]);
-            }
-            delete post.tags;
-            for (key in post) {
-              Vue.set(links[post.id], key, post[key]);
-            }
+    },
+    onload: function() {
+      if (Object.keys(this.tagScores).length > 0) {
+        // Create placeholder Vue objects to be backfilled
+        for (key in this.tagScores) {
+          for (i = 0; i < this.tagScores[key].length; i++) { 
+            var linkScore = this.tagScores[key][i][1];
+            var postId = this.tagScores[key][i][0];
+            if (!this.links.hasOwnProperty(postId))
+              this.links[postId] = this.genPostTemplate(postId);
+            this.links[postId].score += linkScore;
+            this.links[postId].tags[key] = -1;
           }
-        },
-        error: function (error) {
-          console.log(JSON.stringify(error));
         }
-      });
+        this.linkList = Object.values(this.links);
+        this.linkList.sort(function(a, b) {
+          return b.score - a.score;
+        });
+        var fetchList = this.linkList.map(function (x) { return x.id });
+        var populateLinks = this.populateLinks;
+        $.ajax({
+          url: '/api/v1/posts/' + fetchList.join(),
+          method: 'GET',
+          success: function (data) {
+            populateLinks(data.posts);
+          },
+          error: function (error) {
+            console.log(JSON.stringify(error));
+          }
+        });
+      } else {
+        this.populateLinks(this.postData);
+        this.linkList = Object.values(this.links);
+      }
     }
   },
   delimiters: ["${","}"]
